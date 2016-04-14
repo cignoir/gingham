@@ -149,6 +149,48 @@ describe Gingham::Waypoint do
     end
   end
 
+  describe '#update' do
+    let(:wp) { Gingham::Waypoint.new(Gingham::Cell.new(1, 2, 3), Gingham::Direction::D4, parent) }
+
+    before do
+      wp.update
+    end
+
+    context 'when parent is nil' do
+      let(:parent) { nil }
+
+      it 'should calculate walking costs' do
+        expect(wp.cost).to eq 0
+        expect(wp.sum_cost).to eq 0
+        expect(wp.chains).to eq [wp]
+      end
+    end
+
+    context 'when parent is not nil' do
+      let(:parent) { Gingham::Waypoint.new(Gingham::Cell.new(1, 1, 3), direction) }
+
+      context 'and the direction of parent points to 4' do
+        let(:direction) { Gingham::Direction::D4 }
+
+        it 'should calculate walking costs' do
+          expect(wp.cost).to eq 10
+          expect(wp.sum_cost).to eq 10
+          expect(wp.chains).to eq [parent, wp]
+        end
+      end
+
+      context 'and the direction of parent points to 6' do
+        let(:direction) { Gingham::Direction::D6 }
+
+        it 'should calculate walking costs' do
+          expect(wp.cost).to eq 20
+          expect(wp.sum_cost).to eq 20
+          expect(wp.chains).to eq [parent, wp]
+        end
+      end
+    end
+  end
+
   describe '#turning?' do
     let(:parent) { Gingham::Waypoint.new(parent_cell, Gingham::Direction::D8) }
     let(:wp) { Gingham::Waypoint.new(Gingham::Cell.new(0, 0, 0), Gingham::Direction::D8, parent) }
@@ -193,5 +235,29 @@ describe Gingham::Waypoint do
         it { is_expected.to be_truthy }
       end
     end
+  end
+
+  describe '#==' do
+    let(:parent_cell) { Gingham::Cell.new(0, 0, 0) }
+    let(:parent) { Gingham::Waypoint.new(parent_cell, Gingham::Direction::D8) }
+    let(:wp1) { Gingham::Waypoint.new(Gingham::Cell.new(0, 0, 0), Gingham::Direction::D8, parent) }
+    let(:wp2) { Gingham::Waypoint.new(Gingham::Cell.new(3, 1, 0), Gingham::Direction::D8, parent) }
+    let(:wp3) { Gingham::Waypoint.new(Gingham::Cell.new(0, 0, 0), Gingham::Direction::D4, parent) }
+    let(:wp4) { Gingham::Waypoint.new(Gingham::Cell.new(0, 0, 0), Gingham::Direction::D4) }
+    let(:wp5) { Gingham::Waypoint.new(Gingham::Cell.new(0, 0, 0), Gingham::Direction::D8) }
+
+    it 'equality' do
+      expect(wp1 == wp2).to be_falsy
+      expect(wp1 == wp3).to be_falsy
+      expect(wp1 == wp4).to be_falsy
+      expect(wp1 == wp5).to be_truthy
+    end
+  end
+
+  describe '#to_s and #inspect' do
+    let(:parent) { Gingham::Waypoint.new(Gingham::Cell.new(2, 4, 1), Gingham::Direction::D6) }
+    let(:wp)     { Gingham::Waypoint.new(Gingham::Cell.new(2, 5, 1), Gingham::Direction::D8, parent) }
+    it { expect(wp.to_s).to eq '(2,4,1)/6->(2,5,1)/8:15/15'  }
+    it { expect(wp.inspect).to eq '(2,4,1)/6->(2,5,1)/8:15/15'  }
   end
 end

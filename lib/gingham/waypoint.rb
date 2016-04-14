@@ -97,9 +97,6 @@ module Gingham
       @parent ? "#{@parent.cell}/#{@parent.direction}->" + base : base
     end
 
-    def inspect
-      base = "#{@cell}/#{@direction}" + ":#{@cost}/#{@sum_cost}"
-      @parent ? "#{@parent.cell}/#{@parent.direction}->" + base : base
-    end
+    alias_method :inspect, :to_s
   end
 end
