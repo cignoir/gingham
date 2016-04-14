@@ -9,7 +9,7 @@ Gem::Specification.new do |spec|
   spec.authors       = ["cignoir"]
   spec.email         = ["cignoir@gmail.com"]
 
-  spec.summary       = %q{Implementation of pathfinding algorythm based on 3d grids.}
+  spec.summary       = %q{Implementation of original pathfinding algorythm based on 3d grids.}
   spec.description   = %q{R.I.P. StruGarden}
   spec.homepage      = "https://github.com/cignoir/gingham"
   spec.license       = "MIT"
