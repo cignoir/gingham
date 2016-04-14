@@ -1,6 +1,7 @@
 # Gingham
 
 [![Build Status](https://travis-ci.org/cignoir/gingham.svg?branch=master)](https://travis-ci.org/cignoir/gingham)
+[![Coverage Status](https://coveralls.io/repos/github/cignoir/gingham/badge.svg?branch=master)](https://coveralls.io/github/cignoir/gingham?branch=master)
 
 ## Installation
 
