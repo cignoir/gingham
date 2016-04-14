@@ -127,6 +127,25 @@ describe Gingham::Space do
         it { is_expected.to be_nil }
       end
     end
+
+    context 'when direction is 4' do
+      let(:direction) { Gingham::Direction::D4 }
+
+      context 'and query is 88' do
+        let(:query) { 88 }
+        it { is_expected.to eq space.cells[2][4][0] }
+      end
+
+      context 'and query is 8866' do
+        let(:query) { 8866 }
+        it { is_expected.to eq space.cells[2][6][0] }
+      end
+
+      context 'and query is 88888' do
+        let(:query) { 88888 }
+        it { is_expected.to be_nil }
+      end
+    end
   end
 
   describe '#build_all_range_cells' do

@@ -91,6 +91,12 @@ describe Gingham::Waypoint do
         let(:direction) { Gingham::Direction::D2 }
         it { is_expected.to eq 10 }
       end
+
+      context 'when parent direction is nil' do
+        let(:parent_direction) { nil }
+        let(:direction) { Gingham::Direction::D8 }
+        it { is_expected.to eq 0 }
+      end
     end
 
     context 'when start with direction 8' do
