@@ -12,7 +12,6 @@ module Gingham
       other.is_a?(Gingham::Cell) && @x == other.x && @y == other.y && @z == other.z
     end
 
-    #FIXME
     def occupied?
       @is_occupied
     end
