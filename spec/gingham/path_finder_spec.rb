@@ -414,6 +414,30 @@ describe Gingham::PathFinder do
         it { expect(subject.last.cost).to eq 10 }
         it { expect(subject.last.sum_cost).to eq 35 }
       end
+
+      context 'when (2, 1)/8 -> (3, 0)' do
+        let(:x2y1d8) { Gingham::Waypoint.new(Gingham::Cell.new(2, 1, z), 8) }
+        let(:x2y1d2) { Gingham::Waypoint.new(Gingham::Cell.new(2, 1, z), 2) }
+        let(:x2y0d2) { Gingham::Waypoint.new(Gingham::Cell.new(2, 0, z), 2) }
+        let(:x2y0d6) { Gingham::Waypoint.new(Gingham::Cell.new(2, 0, z), 6) }
+        let(:x3y0d6) { Gingham::Waypoint.new(Gingham::Cell.new(3, 0, z), 6) }
+        let(:cell_to) { Gingham::Cell.new(3, 0, z) }
+
+        it { expect(subject.size).to be 5 }
+        it { expect(subject[0]).to eq x2y1d8 }
+        it { expect(subject[0].parent).to be_nil }
+        it { expect(subject[1]).to eq x2y1d2 }
+        it { expect(subject[1].parent).to eq x2y1d8 }
+        it { expect(subject[2]).to eq x2y0d2 }
+        it { expect(subject[2].parent).to eq x2y1d2 }
+        it { expect(subject[3]).to eq x2y0d6 }
+        it { expect(subject[3].parent).to eq x2y0d2 }
+        it { expect(subject[4]).to eq x3y0d6 }
+        it { expect(subject[4].parent).to eq x2y0d6 }
+
+        it { expect(subject.last.cost).to eq 10 }
+        it { expect(subject.last.sum_cost).to eq 35 }
+      end
     end
 
     describe 'max height' do
