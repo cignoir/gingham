@@ -139,11 +139,9 @@ module Gingham
                 end
               end
             end
-            should_move_y = true
-            next
-          else
-            should_move_y = true
           end
+
+          should_move_y = true
         end
 
         path.compact

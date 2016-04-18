@@ -438,6 +438,36 @@ describe Gingham::PathFinder do
         it { expect(subject.last.cost).to eq 10 }
         it { expect(subject.last.sum_cost).to eq 35 }
       end
+
+      context 'when (2, 1)/6 -> (3, 1)' do
+        let(:wp_from) { Gingham::Waypoint.new(Gingham::Cell.new(2, 1, z), 6) }
+        let(:x3y1d6) { Gingham::Waypoint.new(Gingham::Cell.new(3, 1, z), 6) }
+        let(:cell_to) { Gingham::Cell.new(3, 1, z) }
+
+        it { expect(subject.size).to be 2 }
+        it { expect(subject[0].parent).to be_nil }
+        it { expect(subject[0]).to eq wp_from }
+        it { expect(subject.last).to eq x3y1d6 }
+        it { expect(subject.last.parent).to eq wp_from }
+
+        it { expect(subject.last.cost).to eq 10 }
+        it { expect(subject.last.sum_cost).to eq 10 }
+      end
+
+      context 'when (2, 1)/2 -> (2, 0)' do
+        let(:wp_from) { Gingham::Waypoint.new(Gingham::Cell.new(2, 1, z), 2) }
+        let(:x2y0d2) { Gingham::Waypoint.new(Gingham::Cell.new(2, 0, z), 2) }
+        let(:cell_to) { Gingham::Cell.new(2, 0, z) }
+
+        it { expect(subject.size).to be 2 }
+        it { expect(subject[0].parent).to be_nil }
+        it { expect(subject[0]).to eq wp_from }
+        it { expect(subject.last).to eq x2y0d2 }
+        it { expect(subject.last.parent).to eq wp_from }
+
+        it { expect(subject.last.cost).to eq 10 }
+        it { expect(subject.last.sum_cost).to eq 10 }
+      end
     end
 
     describe 'max height' do
