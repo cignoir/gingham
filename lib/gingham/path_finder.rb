@@ -25,7 +25,7 @@ module Gingham
         end
 
         shortest_chains = [from]
-        end_points = close_list.select{ |closed| closed.cell == to.cell }
+        end_points = close_list.select { |closed| closed.cell == to.cell }
 
         unless end_points.size.zero?
           shortest_cost = 999
@@ -41,54 +41,39 @@ module Gingham
 
       def find_skill_path(space, from, to, max_height = 10)
         path = [from]
-        last_wp = path.last
         should_move_y = from.direction == Gingham::Direction::D8 || from.direction == Gingham::Direction::D2
 
         loop_limit = 0
-        while last_wp.cell.x != to.cell.x || last_wp.cell.y != to.cell.y
+        while path.last.cell.x != to.cell.x || path.last.cell.y != to.cell.y
           loop_limit += 1
           break if loop_limit > 30
 
-          if should_move_y && last_wp.cell.y != to.cell.y
-            if last_wp.cell.y < to.cell.y
-              if last_wp.cell.y + 1 != space.depth
-                height = space.height_at(last_wp.cell.x, last_wp.cell.y + 1)
-                cell = space.cells[last_wp.cell.x][last_wp.cell.y + 1][height]
+          if should_move_y && path.last.cell.y != to.cell.y
+            if path.last.cell.y < to.cell.y
+              if path.last.cell.y + 1 != space.depth
+                height = space.height_at(path.last.cell.x, path.last.cell.y + 1)
+                cell = space.cells[path.last.cell.x][path.last.cell.y + 1][height]
                 break unless cell.passable?
 
-                if last_wp.direction == 8
-                  break if cell.z > max_height
-                  wp = Gingham::Waypoint.new(cell, 8, last_wp)
-                  path << wp
-                  last_wp = wp
-                else
-                  tmp = Gingham::Waypoint.new(last_wp.cell, 8, last_wp)
-                  path << tmp
-                  break if cell.z > max_height
-                  tmp = Gingham::Waypoint.new(cell, 8, tmp)
-                  path << tmp
-                  last_wp = tmp
+                if path.last.direction != 8
+                  path << Gingham::Waypoint.new(path.last.cell, 8, path.last)
                 end
+
+                break if cell.z > max_height
+                path << Gingham::Waypoint.new(cell, 8, path.last)
               end
-            elsif last_wp.cell.y > to.cell.y
-              if last_wp.cell.y - 1 >= 0
-                height = space.height_at(last_wp.cell.x, last_wp.cell.y - 1)
-                cell = space.cells[last_wp.cell.x][last_wp.cell.y - 1][height]
+            elsif path.last.cell.y > to.cell.y
+              if path.last.cell.y - 1 >= 0
+                height = space.height_at(path.last.cell.x, path.last.cell.y - 1)
+                cell = space.cells[path.last.cell.x][path.last.cell.y - 1][height]
                 break unless cell.passable?
 
-                if last_wp.direction == 2
-                  break if cell.z > max_height
-                  wp = Gingham::Waypoint.new(cell, 2, last_wp)
-                  path << wp
-                  last_wp = wp
-                else
-                  tmp = Gingham::Waypoint.new(last_wp.cell, 2, last_wp)
-                  path << tmp
-                  break if cell.z > max_height
-                  tmp = Gingham::Waypoint.new(cell, 2, tmp)
-                  path << tmp
-                  last_wp = tmp
+                if path.last.direction != 2
+                  path << Gingham::Waypoint.new(path.last.cell, 2, path.last)
                 end
+
+                break if cell.z > max_height
+                path << Gingham::Waypoint.new(cell, 2, path.last)
               end
             end
             should_move_y = false
@@ -97,46 +82,32 @@ module Gingham
             should_move_y = false
           end
 
-          if !should_move_y && last_wp.cell.x != to.cell.x
-            if last_wp.cell.x < to.cell.x
-              if last_wp.cell.x + 1 != space.width
-                height = space.height_at(last_wp.cell.x + 1, last_wp.cell.y)
-                cell = space.cells[last_wp.cell.x + 1][last_wp.cell.y][height]
+          if !should_move_y && path.last.cell.x != to.cell.x
+            if path.last.cell.x < to.cell.x
+              if path.last.cell.x + 1 != space.width
+                height = space.height_at(path.last.cell.x + 1, path.last.cell.y)
+                cell = space.cells[path.last.cell.x + 1][path.last.cell.y][height]
                 break unless cell.passable?
 
-                if last_wp.direction == 6
-                  break if cell.z > max_height
-                  wp = Gingham::Waypoint.new(cell, 6, last_wp)
-                  path << wp
-                  last_wp = wp
-                else
-                  tmp = Gingham::Waypoint.new(last_wp.cell, 6, last_wp)
-                  path << tmp
-                  break if cell.z > max_height
-                  tmp = Gingham::Waypoint.new(cell, 6, tmp)
-                  path << tmp
-                  last_wp = tmp
+                if path.last.direction != 6
+                  path << Gingham::Waypoint.new(path.last.cell, 6, path.last)
                 end
+
+                break if cell.z > max_height
+                path << Gingham::Waypoint.new(cell, 6, path.last)
               end
-            elsif last_wp.cell.x > to.cell.x
-              if last_wp.cell.x - 1 >= 0
-                height = space.height_at(last_wp.cell.x - 1, last_wp.cell.y)
-                cell = space.cells[last_wp.cell.x - 1][last_wp.cell.y][height]
+            elsif path.last.cell.x > to.cell.x
+              if path.last.cell.x - 1 >= 0
+                height = space.height_at(path.last.cell.x - 1, path.last.cell.y)
+                cell = space.cells[path.last.cell.x - 1][path.last.cell.y][height]
                 break unless cell.passable?
 
-                if last_wp.direction == 4
-                  break if cell.z > max_height
-                  wp = Gingham::Waypoint.new(cell, 4, last_wp)
-                  path << wp
-                  last_wp = wp
-                else
-                  tmp = Gingham::Waypoint.new(last_wp.cell, 4, last_wp)
-                  path << tmp
-                  break if cell.z > max_height
-                  tmp = Gingham::Waypoint.new(cell, 4, tmp)
-                  path << tmp
-                  last_wp = tmp
+                if path.last.direction != 4
+                  path << Gingham::Waypoint.new(path.last.cell, 4, path.last)
                 end
+
+                break if cell.z > max_height
+                path << Gingham::Waypoint.new(cell, 4, path.last)
               end
             end
           end
