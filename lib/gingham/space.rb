@@ -1,6 +1,6 @@
 module Gingham
   class Space
-    attr_accessor :width, :height, :depth, :cells
+    attr_accessor :width, :depth, :height, :cells
 
     def initialize(width = 0, depth = 0, height = 0)
       @width = width

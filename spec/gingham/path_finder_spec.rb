@@ -18,6 +18,10 @@ describe Gingham::PathFinder do
       let(:space) { Gingham::Space.new(3, 3, 3) }
       let(:wp) { Gingham::Waypoint.new(space.cells[1][1][1], Gingham::Direction::D8) }
 
+      before do
+        space.cells.flatten.select{ |cell| cell.z == 1 }.each(&:set_ground)
+      end
+
       it { is_expected.to include Gingham::Waypoint.new(space.cells[1][2][1], Gingham::Direction::D8, wp) }
       it { is_expected.to include Gingham::Waypoint.new(space.cells[2][1][1], Gingham::Direction::D6, wp) }
       it { is_expected.to include Gingham::Waypoint.new(space.cells[1][0][1], Gingham::Direction::D2, wp) }
@@ -44,6 +48,10 @@ describe Gingham::PathFinder do
       let(:space) { Gingham::Space.new(3, 3, 3) }
       let(:cell) { space.cells[1][1][1] }
 
+      before do
+        space.cells.flatten.select{ |cell| cell.z == 1 }.each(&:set_ground)
+      end
+
       it { is_expected.to include space.cells[1][2][1] }
       it { is_expected.to include space.cells[2][1][1] }
       it { is_expected.to include space.cells[1][0][1] }
@@ -52,10 +60,17 @@ describe Gingham::PathFinder do
 
     context 'when there are not enough adjacent cells' do
       let(:space) { Gingham::Space.new(1, 1, 1) }
-      let(:cell) { Gingham::Cell.new(0, 0, 1) }
+      let(:cell) { Gingham::Cell.new(0, 0, 0) }
 
       it { expect(subject.size).to be_zero }
     end
+
+    # context 'when jump_power is given' do
+    #   let(:space) { Gingham::Space.new(3, 3, 3) }
+    #   let(:cell) { space.cells[1][1][1] }
+    #   let(:jump_power) { 0 }
+    #   subject { Gingham::PathFinder.find_adjacent_cells(space, cell, jump_power) }
+    # end
   end
 
   describe 'find_move_path' do
@@ -489,12 +504,12 @@ describe Gingham::PathFinder do
         let(:cell_to) { Gingham::Cell.new(3, 2, 2) }
 
         before do
-          space.cells[2][1][0].is_ground = true
-          space.cells[2][2][0].is_ground = true
-          space.cells[2][2][1].is_ground = true
-          space.cells[3][2][0].is_ground = true
-          space.cells[3][2][1].is_ground = true
-          space.cells[3][2][2].is_ground = true
+          space.cells[2][1][0].set_ground
+          space.cells[2][2][0].set_ground
+          space.cells[2][2][1].set_ground
+          space.cells[3][2][0].set_ground
+          space.cells[3][2][1].set_ground
+          space.cells[3][2][2].set_ground
         end
 
         it { expect(subject.size).to eq 3 }

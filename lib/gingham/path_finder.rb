@@ -1,7 +1,7 @@
 module Gingham
   class PathFinder
     class << self
-      def find_move_path(space, from, to, cost_limit = 999)
+      def find_move_path(space, from, to, move_power = 999, jump_power = 999)
         raise ArgumentError unless space && space.is_a?(Gingham::Space)
         raise ArgumentError unless from && from.is_a?(Gingham::Waypoint) && to && to.is_a?(Gingham::Waypoint)
 
@@ -15,9 +15,9 @@ module Gingham
           close_list << current_wp
           open_list = open_list.drop 1
 
-          adjacent_waypoints = Gingham::PathFinder.find_adjacent_waypoints(space, current_wp)
+          adjacent_waypoints = Gingham::PathFinder.find_adjacent_waypoints(space, current_wp, jump_power)
           adjacent_waypoints.each do |wp|
-            if wp.sum_cost < cost_limit
+            if wp.sum_cost < move_power
               open_list << wp unless close_list.include? wp
             end
           end
@@ -39,7 +39,7 @@ module Gingham
         shortest_chains
       end
 
-      def find_skill_path(space, from, to, max_height = 10)
+      def find_skill_path(space, from, to, max_height = 999)
         path = [from]
         should_move_y = from.direction == Gingham::Direction::D8 || from.direction == Gingham::Direction::D2
 
@@ -119,12 +119,12 @@ module Gingham
       end
     end
 
-    def self.find_adjacent_waypoints(space, wp)
+    def self.find_adjacent_waypoints(space, wp, jump_power = 999)
       raise unless space && space.is_a?(Gingham::Space)
       raise unless wp && wp.is_a?(Gingham::Waypoint)
 
       adjacent_list = []
-      adjacent_cells = Gingham::PathFinder.find_adjacent_cells(space, wp.cell)
+      adjacent_cells = Gingham::PathFinder.find_adjacent_cells(space, wp.cell, jump_power)
       adjacent_cells.each do |cell|
         move_direction = Gingham::Waypoint.detect_direction(wp, cell)
         parent = wp
@@ -138,7 +138,7 @@ module Gingham
       adjacent_list
     end
 
-    def self.find_adjacent_cells(space, cell)
+    def self.find_adjacent_cells(space, cell, jump_power = 999)
       raise unless space && space.is_a?(Gingham::Space)
       raise unless cell && cell.is_a?(Gingham::Cell)
 
@@ -147,23 +147,39 @@ module Gingham
       x, y, z = cell.x, cell.y, cell.z
 
       if x + 1 < w
-        target_cell = space.cells[x + 1][y][z]
-        adjacent_list << target_cell unless target_cell && target_cell.occupied?
+        target_cell = space.ground_at(x + 1, y)
+        if target_cell
+          if !target_cell.occupied? || (z - target_cell.z).abs <= jump_power
+            adjacent_list << target_cell
+          end
+        end
       end
 
       if x - 1 >= 0
-        target_cell = space.cells[x - 1][y][z]
-        adjacent_list << target_cell unless target_cell && target_cell.occupied?
+        target_cell = space.ground_at(x - 1, y)
+        if target_cell
+          if !target_cell.occupied? || (z - target_cell.z).abs <= jump_power
+            adjacent_list << target_cell
+          end
+        end
       end
 
       if y + 1 < d
-        target_cell = space.cells[x][y + 1][z]
-        adjacent_list << target_cell unless target_cell && target_cell.occupied?
+        target_cell = space.ground_at(x, y + 1)
+        if target_cell
+          if !target_cell.occupied? || (z - target_cell.z).abs <= jump_power
+            adjacent_list << target_cell
+          end
+        end
       end
 
       if y - 1 >= 0
-        target_cell = space.cells[x][y - 1][z]
-        adjacent_list << target_cell unless target_cell && target_cell.occupied?
+        target_cell = space.ground_at(x, y - 1)
+        if target_cell
+          if !target_cell.occupied? || (z - target_cell.z).abs <= jump_power
+            adjacent_list << target_cell
+          end
+        end
       end
 
       adjacent_list

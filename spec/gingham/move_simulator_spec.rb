@@ -50,6 +50,8 @@ describe Gingham::MoveSimulator do
     let(:p5_move_steps) { [p5_wp_from] }
 
     before do
+      space.cells.flatten.select{ |cell| cell.z == 1 }.each(&:set_ground)
+
       naterua.step_index = 0
 
       p1.move_steps = p1_move_steps
@@ -277,6 +279,8 @@ describe Gingham::MoveSimulator do
     let(:p2_move_steps) { Gingham::PathFinder.find_move_path(space, p2_wp_from, p2_wp_to) }
 
     before do
+      space.cells.flatten.select{ |cell| cell.z == 1 }.each(&:set_ground)
+
       p1.move_steps = p1_move_steps
       p1.weight = p1_weight
       p1.team_id = p1_team_id

@@ -35,5 +35,10 @@ module Gingham
     def inspect
       "(#{x},#{y},#{z})"
     end
+
+    def set_ground
+      @is_ground = true
+      self
+    end
   end
 end
