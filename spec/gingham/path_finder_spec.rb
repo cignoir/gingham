@@ -276,6 +276,74 @@ describe Gingham::PathFinder do
         it { expect(subject[5].sum_cost).to eq 40 }
       end
     end
+
+    describe 'power condition' do
+      let(:space) { Gingham::Space.new(1, 2, 5) }
+      let(:cell_from) { space.cells[0][0][0] }
+      let(:cell_to) { space.cells[0][1][4] }
+      let(:direction_from) { Gingham::Direction::D8 }
+      let(:direction_to) { Gingham::Direction::D8 }
+      let(:wp_from) { Gingham::Waypoint.new(cell_from, direction_from) }
+      let(:wp_to) { Gingham::Waypoint.new(cell_to, direction_to) }
+      let(:move_power) { 999 }
+      let(:jump_power) { 999 }
+
+      before do
+        space.cells[0][0][0].set_ground
+        space.cells[0][1][4].set_ground
+      end
+
+      subject { Gingham::PathFinder.find_move_path(space, wp_from, wp_to, move_power, jump_power) }
+
+      describe 'move_power' do
+        context 'when move_power is 0' do
+          let(:move_power) { 0 }
+          it { expect(subject.last.cell).to eq cell_from }
+        end
+
+        context 'when move_power is 5' do
+          let(:move_power) { 5 }
+          it { expect(subject.last.cell).to eq cell_from }
+        end
+
+        context 'when move_power is 10' do
+          let(:move_power) { 10 }
+          it { expect(subject.last.cell).to eq cell_to }
+        end
+      end
+
+      describe 'jump_power' do
+        context 'when jump_power is 0' do
+          let(:jump_power) { 0 }
+          it { expect(subject.last.cell).to eq cell_from }
+        end
+
+        context 'when jump_power is 1' do
+          let(:jump_power) { 1 }
+          it { expect(subject.last.cell).to eq cell_from }
+        end
+
+        context 'when jump_power is 2' do
+          let(:jump_power) { 2 }
+          it { expect(subject.last.cell).to eq cell_from }
+        end
+
+        context 'when jump_power is 3' do
+          let(:jump_power) { 3 }
+          it { expect(subject.last.cell).to eq cell_from }
+        end
+
+        context 'when jump_power is 4' do
+          let(:jump_power) { 4 }
+          it { expect(subject.last.cell).to eq cell_to }
+        end
+
+        context 'when jump_power is 5' do
+          let(:jump_power) { 5 }
+          it { expect(subject.last.cell).to eq cell_to }
+        end
+      end
+    end
   end
 
   describe 'find_skill_path' do

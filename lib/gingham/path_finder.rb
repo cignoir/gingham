@@ -17,7 +17,7 @@ module Gingham
 
           adjacent_waypoints = Gingham::PathFinder.find_adjacent_waypoints(space, current_wp, jump_power)
           adjacent_waypoints.each do |wp|
-            if wp.sum_cost < move_power
+            if wp.sum_cost <= move_power
               open_list << wp unless close_list.include? wp
             end
           end
@@ -149,7 +149,7 @@ module Gingham
       if x + 1 < w
         target_cell = space.ground_at(x + 1, y)
         if target_cell
-          if !target_cell.occupied? || (z - target_cell.z).abs <= jump_power
+          if !target_cell.occupied? && (z - target_cell.z).abs <= jump_power
             adjacent_list << target_cell
           end
         end
@@ -158,7 +158,7 @@ module Gingham
       if x - 1 >= 0
         target_cell = space.ground_at(x - 1, y)
         if target_cell
-          if !target_cell.occupied? || (z - target_cell.z).abs <= jump_power
+          if !target_cell.occupied? && (z - target_cell.z).abs <= jump_power
             adjacent_list << target_cell
           end
         end
@@ -167,7 +167,7 @@ module Gingham
       if y + 1 < d
         target_cell = space.ground_at(x, y + 1)
         if target_cell
-          if !target_cell.occupied? || (z - target_cell.z).abs <= jump_power
+          if !target_cell.occupied? && (z - target_cell.z).abs <= jump_power
             adjacent_list << target_cell
           end
         end
@@ -176,7 +176,7 @@ module Gingham
       if y - 1 >= 0
         target_cell = space.ground_at(x, y - 1)
         if target_cell
-          if !target_cell.occupied? || (z - target_cell.z).abs <= jump_power
+          if !target_cell.occupied? && (z - target_cell.z).abs <= jump_power
             adjacent_list << target_cell
           end
         end
