@@ -5,8 +5,20 @@ module Gingham
         raise ArgumentError unless space && space.is_a?(Gingham::Space)
         raise ArgumentError unless from && from.is_a?(Gingham::Waypoint) && to && to.is_a?(Gingham::Waypoint)
 
+        (0..space.width - 1).each do |x|
+          (0..space.depth - 1).each do |y|
+            (0..space.height - 1).each do |z|
+              space.cells[x][y][z].clear_path
+            end
+          end
+        end
+
         open_list = [from]
-        return open_list if from.cell == to.cell
+        if from.cell == to.cell
+          from.cell.is_move_path = true
+          return open_list
+        end
+
         close_list = []
         loop_limit = 0
 
@@ -36,6 +48,11 @@ module Gingham
             end
           end
         end
+
+        shortest_chains.each do |wp|
+          wp.cell.is_move_path = true
+        end
+
         shortest_chains
       end
 

@@ -92,6 +92,13 @@ describe Gingham::PathFinder do
       let(:wp_to) { Gingham::Waypoint.new(cell_to, direction_to) }
       let(:direction_to) { Gingham::Direction::D8 }
 
+      context 'when (2, 1)/8 -> (2, 1)/8' do
+        let(:cell_to) { space.cells[2][1][z] }
+        it { is_expected.to include wp_from }
+        it { expect(subject.size).to be 1 }
+        it { expect(subject.first.cell).to be_move_path }
+      end
+
       context 'when (2, 1)/8 -> (2, 2)/8' do
         let(:cell_to) { space.cells[2][2][z] }
         it { is_expected.to include wp_from }
@@ -100,6 +107,9 @@ describe Gingham::PathFinder do
         it { expect(subject.last.parent).to eq wp_from }
         it { expect(subject.last.cost).to eq 10 }
         it { expect(subject.last.sum_cost).to eq 10 }
+
+        it { expect(subject.last.parent.cell).to be_move_path }
+        it { expect(subject.last.cell).to be_move_path }
       end
 
       context 'when (2, 1)/8 -> (2, 3)/8' do
@@ -112,6 +122,9 @@ describe Gingham::PathFinder do
         it { expect(subject.last.parent).to eq wp1 }
         it { expect(subject.last.cost).to eq 10 }
         it { expect(subject.last.sum_cost).to eq 20 }
+
+        it { expect(subject.last.parent.cell).to be_move_path }
+        it { expect(subject.last.cell).to be_move_path }
       end
 
       context 'when (2, 1)/8 -> (2, 3)/6' do

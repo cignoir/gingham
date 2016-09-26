@@ -1,11 +1,12 @@
 module Gingham
   class Cell
-    attr_accessor :x, :y, :z, :is_occupied, :is_ground
+    attr_accessor :x, :y, :z, :is_occupied, :is_ground, :is_move_path
 
     def initialize(x = 0, y = 0, z = 0)
       @x, @y, @z = x.to_i, y.to_i, z.to_i
       @is_occupied = false
       @is_ground = false
+      @is_move_path = false
     end
 
     def ==(other)
@@ -28,17 +29,25 @@ module Gingham
       @is_ground
     end
 
+    def move_path?
+      @is_move_path
+    end
+
     def to_s
       "(#{x},#{y},#{z})"
     end
 
     def inspect
-      "(#{x},#{y},#{z})"
+      to_s
     end
 
     def set_ground
       @is_ground = true
       self
+    end
+
+    def clear_path
+      @is_move_path = false
     end
   end
 end
