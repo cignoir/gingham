@@ -10,7 +10,7 @@ module Gingham
         open_list = [from]
         if from.cell == to.cell
           from.cell.is_move_path = true
-          return open_list
+          return from.chains
         end
 
         close_list = []
@@ -30,7 +30,7 @@ module Gingham
           loop_limit += 1
         end
 
-        shortest_chains = [from]
+        shortest_chains = from.chains
         end_points = close_list.select { |closed| closed.cell == to.cell }
 
         unless end_points.size.zero?

@@ -25,8 +25,17 @@ module Gingham
         @move_steps = [@waypoint]
         @waypoint.cell.is_move_path = true
       else
-        @move_steps = @move_steps.size.zero? ? [@waypoint] : @move_steps.select(&:locked?)
+        @move_steps = if @move_steps.size.zero?
+                        @move_steps = [@waypoint]
+                        @waypoint.cell.is_move_path = true
+                      else
+                        @move_steps.select(&:locked?)
+                      end
       end
+    end
+
+    def dump_move_steps
+      @move_steps.map(&:cell).join('->')
     end
   end
 end
