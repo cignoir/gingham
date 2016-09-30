@@ -1,10 +1,11 @@
 module Gingham
   class Cell
-    attr_accessor :x, :y, :z, :is_occupied, :is_ground, :is_move_path, :is_locked
+    attr_accessor :x, :y, :z, :is_occupied, :is_passable, :is_ground, :is_move_path, :is_locked
 
     def initialize(x = 0, y = 0, z = 0)
       @x, @y, @z = x.to_i, y.to_i, z.to_i
       @is_occupied = false
+      @is_passable = false
       @is_ground = false
       @is_move_path = false
       @is_locked = false
@@ -19,7 +20,7 @@ module Gingham
     end
 
     def passable?
-      !@is_occupied
+      @is_passable
     end
 
     def sky?
@@ -49,6 +50,7 @@ module Gingham
 
     def clear_path
       @is_move_path = false unless locked?
+      @is_passable = false unless locked?
     end
 
     def locked?

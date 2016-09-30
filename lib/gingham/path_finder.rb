@@ -8,11 +8,6 @@ module Gingham
         space.reset_move_path_info(force = false)
 
         open_list = [from]
-        if from.cell == to.cell
-          from.cell.is_move_path = true
-          return from.chains
-        end
-
         close_list = []
         loop_limit = 0
 
@@ -24,7 +19,10 @@ module Gingham
           adjacent_waypoints = Gingham::PathFinder.find_adjacent_waypoints(space, current_wp, jump_power)
           adjacent_waypoints.each do |wp|
             if wp.sum_cost <= move_power
-              open_list << wp unless close_list.include? wp
+              unless close_list.include? wp
+                wp.cell.is_passable = true
+                open_list << wp
+              end
             end
           end
           loop_limit += 1
@@ -64,7 +62,7 @@ module Gingham
               if path.last.cell.y + 1 != space.depth
                 height = space.height_at(path.last.cell.x, path.last.cell.y + 1)
                 cell = space.cells[path.last.cell.x][path.last.cell.y + 1][height]
-                break unless cell.passable?
+                break if cell.occupied?
 
                 if path.last.direction != 8
                   path << Gingham::Waypoint.new(path.last.cell, 8, path.last)
@@ -77,7 +75,7 @@ module Gingham
               if path.last.cell.y - 1 >= 0
                 height = space.height_at(path.last.cell.x, path.last.cell.y - 1)
                 cell = space.cells[path.last.cell.x][path.last.cell.y - 1][height]
-                break unless cell.passable?
+                break if cell.occupied?
 
                 if path.last.direction != 2
                   path << Gingham::Waypoint.new(path.last.cell, 2, path.last)
@@ -98,7 +96,7 @@ module Gingham
               if path.last.cell.x + 1 != space.width
                 height = space.height_at(path.last.cell.x + 1, path.last.cell.y)
                 cell = space.cells[path.last.cell.x + 1][path.last.cell.y][height]
-                break unless cell.passable?
+                break if cell.occupied?
 
                 if path.last.direction != 6
                   path << Gingham::Waypoint.new(path.last.cell, 6, path.last)
@@ -111,7 +109,7 @@ module Gingham
               if path.last.cell.x - 1 >= 0
                 height = space.height_at(path.last.cell.x - 1, path.last.cell.y)
                 cell = space.cells[path.last.cell.x - 1][path.last.cell.y][height]
-                break unless cell.passable?
+                break if cell.occupied?
 
                 if path.last.direction != 4
                   path << Gingham::Waypoint.new(path.last.cell, 4, path.last)

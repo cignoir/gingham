@@ -5,7 +5,7 @@ describe Gingham::Cell do
     expect{ Gingham::Cell }.not_to raise_error
   end
 
-  describe '#occupied? and #passable?' do
+  describe '#occupied?' do
     let(:cell) { Gingham::Cell.new }
 
     context 'when cell is occupied' do
@@ -22,7 +22,27 @@ describe Gingham::Cell do
 
       it 'returns a flag correctly' do
         expect(cell).not_to be_occupied
+        expect(cell).not_to be_passable
+      end
+    end
+  end
+
+  describe '#passable?' do
+    let(:cell) { Gingham::Cell.new }
+
+    context 'when cell is passable' do
+      before { cell.is_passable = true }
+
+      it 'returns a flag correctly' do
         expect(cell).to be_passable
+      end
+    end
+
+    context 'when cell is not passable' do
+      before { cell.is_passable = false }
+
+      it 'returns a flag correctly' do
+        expect(cell).not_to be_passable
       end
     end
   end
