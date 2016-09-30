@@ -5,13 +5,7 @@ module Gingham
         raise ArgumentError unless space && space.is_a?(Gingham::Space)
         raise ArgumentError unless from && from.is_a?(Gingham::Waypoint) && to && to.is_a?(Gingham::Waypoint)
 
-        (0..space.width - 1).each do |x|
-          (0..space.depth - 1).each do |y|
-            (0..space.height - 1).each do |z|
-              space.cells[x][y][z].clear_path
-            end
-          end
-        end
+        space.reset_move_path_info(force = false)
 
         open_list = [from]
         if from.cell == to.cell

@@ -71,5 +71,17 @@ module Gingham
       end
       result.uniq
     end
+
+    def reset_move_path_info(force = false)
+      (0..@width - 1).each do |x|
+        (0..@depth - 1).each do |y|
+          (0..@height - 1).each do |z|
+            cell = @cells[x][y][z]
+            cell.unlock if force
+            cell.clear_path
+          end
+        end
+      end
+    end
   end
 end

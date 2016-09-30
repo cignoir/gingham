@@ -1,6 +1,6 @@
 module Gingham
   class Waypoint
-    attr_accessor :cell, :direction, :parent, :cost, :sum_cost, :chains
+    attr_accessor :cell, :direction, :parent, :cost, :sum_cost, :chains, :is_locked
 
     class << self
       def detect_direction(from, target_cell)
@@ -98,5 +98,15 @@ module Gingham
     end
 
     alias_method :inspect, :to_s
+
+    def lock
+      @is_locked = true
+      @cell.lock
+    end
+
+    def unlock
+      @is_locked = false
+      @cell.unlock
+    end
   end
 end

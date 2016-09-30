@@ -1,12 +1,13 @@
 module Gingham
   class Cell
-    attr_accessor :x, :y, :z, :is_occupied, :is_ground, :is_move_path
+    attr_accessor :x, :y, :z, :is_occupied, :is_ground, :is_move_path, :is_locked
 
     def initialize(x = 0, y = 0, z = 0)
       @x, @y, @z = x.to_i, y.to_i, z.to_i
       @is_occupied = false
       @is_ground = false
       @is_move_path = false
+      @is_locked = false
     end
 
     def ==(other)
@@ -47,7 +48,19 @@ module Gingham
     end
 
     def clear_path
-      @is_move_path = false
+      @is_move_path = false unless locked?
+    end
+
+    def locked?
+      @is_locked
+    end
+
+    def lock
+      @is_locked = true
+    end
+
+    def unlock
+      @is_locked = false
     end
   end
 end
