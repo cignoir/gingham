@@ -1,7 +1,7 @@
 module Gingham
   class PathFinder
     class << self
-      def find_move_path(space, from, to, move_power = 999, jump_power = 999)
+      def find_move_path(space, from, to, move_power = 999, jump_power = 999, margin = 0)
         raise ArgumentError unless space && space.is_a?(Gingham::Space)
         raise ArgumentError unless from && from.is_a?(Gingham::Waypoint) && to && to.is_a?(Gingham::Waypoint)
 
@@ -18,7 +18,8 @@ module Gingham
 
           adjacent_waypoints = Gingham::PathFinder.find_adjacent_waypoints(space, current_wp, jump_power)
           adjacent_waypoints.each do |wp|
-            if wp.sum_cost <= move_power
+            # margin=方向転換のための余力
+            if (wp.sum_cost + margin) <= move_power
               unless close_list.include? wp
                 wp.cell.is_passable = true
                 open_list << wp
