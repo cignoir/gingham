@@ -350,4 +350,65 @@ describe Gingham::MoveSimulator do
       end
     end
   end
+
+  describe '#simulate special case' do
+    let(:space) { Gingham::Space.new(5, 5, 3) }
+    let(:actors) { [p1, p2] }
+
+    let(:p1) { Gingham::Actor.new(p1_wp_from) }
+    let(:p1_wp_from) { Gingham::Waypoint.new(p1_cell, p1_direction) }
+    let(:p1_wp_to) { Gingham::Waypoint.new(space.cells[2][2][1], p1_direction) }
+    let(:p1_cell) { space.cells[1][2][1] }
+    let(:p1_direction) { Gingham::Direction::D6 }
+    let(:p1_team_id) { 0 }
+    let(:p1_move_steps) { Gingham::PathFinder.find_move_path(space, p1_wp_from, p1_wp_to) }
+
+    let(:p2) { Gingham::Actor.new(p2_wp_from) }
+    let(:p2_wp_from) { Gingham::Waypoint.new(p2_cell, p2_direction) }
+    let(:p2_wp_to) { Gingham::Waypoint.new(space.cells[1][1][1], Gingham::Direction::D8) }
+    let(:p2_cell) { space.cells[1][2][1] }
+    let(:p2_direction) { Gingham::Direction::D8 }
+    let(:p2_team_id) { 0 }
+    let(:p2_move_steps) { Gingham::PathFinder.find_move_path(space, p2_wp_from, p2_wp_to) }
+
+    before do
+      space.cells.flatten.select{ |cell| cell.z == 1 }.each(&:set_ground)
+    end
+
+    context 'when there are collision' do
+      context 'same team' do
+        context 'pose on collision' do
+          let(:p1_cell) { space.cells[1][2][1] }
+          let(:p1_direction) { Gingham::Direction::D6 }
+          let(:p1_wp_from) { Gingham::Waypoint.new(p1_cell, p1_direction) }
+          let(:p1_wp_to) { Gingham::Waypoint.new(space.cells[2][2][1], p1_direction) }
+          let(:p2_cell) { space.cells[1][1][1] }
+          let(:p2_direction) { Gingham::Direction::D8 }
+          let(:p2_wp_from) { Gingham::Waypoint.new(p2_cell, p2_direction) }
+          let(:p2_wp_to) { Gingham::Waypoint.new(space.cells[1][2][1], p2_direction) }
+
+          before do
+            p1_ms_1 = Gingham::Waypoint.new(p1_cell, p1_direction)
+            p1_ms_2 = Gingham::Waypoint.new(p1_cell, p1_direction, p1_ms_1)
+            p1_ms_3 = Gingham::Waypoint.new(space.cells[2][2][1], p1_direction, p1_ms_2)
+            p1.move_steps = [p1_ms_1, p1_ms_2, p1_ms_3]
+
+            p2_ms_1 = Gingham::Waypoint.new(p2_cell, p2_direction)
+            p2_ms_2 = Gingham::Waypoint.new(p1_cell, p2_direction, p2_ms_1)
+            p2.move_steps = [p2_ms_1, p2_ms_2]
+
+            Gingham::MoveSimulator.record(actors)
+          end
+
+          it 'p2 can move to 1,2,1' do
+            expect(p1.waypoint.cell).to eq space.cells[2][2][1]
+            expect(p1.waypoint.direction).to eq Gingham::Direction::D6
+            expect(p2.waypoint.cell).to eq space.cells[1][2][1]
+            expect(p2.waypoint.direction).to eq Gingham::Direction::D8
+            expect(p2.move_steps.size).to eq 3
+          end
+        end
+      end
+    end
+  end
 end
