@@ -46,7 +46,9 @@ module Gingham
 
       def record(actors)
         all_moved = actors.select(&:move_end?).size == actors.size
-        all_stayed = actors.reject(&:move_end?).map(&:move_status).uniq.first == Gingham::MoveStatus::STAY
+
+        rest_statuses = actors.reject(&:move_end?).map(&:move_status).uniq
+        all_stayed = rest_statuses.size == 1 && rest_statuses.first == Gingham::MoveStatus::STAY
 
         index = 0
         records = [MoveFrame.new(index, actors)]
@@ -56,7 +58,9 @@ module Gingham
           records << MoveFrame.new(index, actors)
 
           all_moved = actors.select(&:move_end?).size == actors.size
-          all_stayed = actors.reject(&:move_end?).map(&:move_status).uniq.first == Gingham::MoveStatus::STAY
+
+          rest_statuses = actors.reject(&:move_end?).map(&:move_status).uniq
+          all_stayed = rest_statuses.first == Gingham::MoveStatus::STAY
         end
 
         records
